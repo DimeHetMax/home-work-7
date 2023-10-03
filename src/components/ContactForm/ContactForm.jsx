@@ -1,7 +1,25 @@
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector} from "react-redux";
+import { getContacts } from "redux/selectors";
+// import { addContacts } from "redux/actions";
+import { addContacts } from "redux/contactsSlice";
 import css from "./ContactForm.module.css"
 
-export function ContactForm ({addContact}){
+export const ContactForm= () =>{
+  const contacts = useSelector(getContacts)
+  const dispatch = useDispatch();
+
+  const addContact = (event) => {
+    event.preventDefault()
+    const name = event.target.elements.name.value;
+    const phone = event.target.elements.number.value;
+    const existingContact = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase());
+    if (existingContact) {
+      alert('This name already exists in the phonebook!');
+      return;
+    }
+    dispatch(addContacts(name, phone))
+    event.target.reset();
+  }
   return (
     <form onSubmit={addContact}>
       <label>
@@ -32,7 +50,3 @@ export function ContactForm ({addContact}){
     </form>
   );
 }
-
-ContactForm.propTypes = {
-  addContact: PropTypes.func.isRequired
-};
